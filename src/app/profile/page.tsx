@@ -104,7 +104,7 @@ export default function UserProfile() {
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
             <div className="flex flex-col items-center">
-              <Avatar className="h-24 w-24 border-4 border-primary overflow-clip">
+              <Avatar className="h-24 w-24 border-4 border-primary overflow-clip object-contain">
                 <AvatarImage
                   src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                   alt="User"

@@ -60,7 +60,8 @@ const MOCK_NEARBY_ISSUES: Issue[] = [
     reportDate: "2 days ago",
     votes: 35,
     comments: 8,
-    image: "https://images.unsplash.com/photo-1621451651659-fd172ebe0d60",
+    image:
+      "https://images.unsplash.com/photo-1605600659908-0ef719419d41?q=80&w=1936&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     latitude: 12.9784,
     longitude: 77.6408,
     taggedAuthorities: ["auth1", "auth2"],
@@ -171,7 +172,10 @@ export default function NearbyIssues() {
         <ScrollArea className="h-[400px]">
           <div className="space-y-4">
             {filteredIssues.map((issue) => (
-              <div key={issue.id} className="issue-card flex overflow-hidden">
+              <div
+                key={issue.id}
+                className="issue-card flex items-center px-2  overflow-hidden"
+              >
                 {issue.image && (
                   <div className="w-24 h-24 md:w-32 md:h-32 shrink-0">
                     <img

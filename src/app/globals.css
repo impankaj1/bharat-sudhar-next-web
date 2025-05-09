@@ -114,3 +114,223 @@
   --sidebar-border: oklch(0.2 0.02 250);
   --sidebar-ring: oklch(0.7 0.1 250);
 }
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-size: var(--font-weight-medium);
+    justify-tracks: var(--tracking-tight);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}
+
+@layer components {
+  .badge-silver {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: var(--radius-full);
+    font-size: small;
+    font-weight: var(--font-weight-medium);
+    background-color: var(--color-orange-100);
+    color: var(--color-orange-800);
+  }
+
+  .badge-gold {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: var(--radius-full);
+    font-size: small;
+    font-weight: var(--font-weight-medium);
+    background-color: var(--color-yellow-100);
+    color: var(--color-yellow-800);
+  }
+
+  .badge-platinum {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: var(--radius-full);
+    font-size: small;
+    font-weight: var(--font-weight-medium);
+    background-color: var(--color-blue-100);
+    color: var(--color-blue-800);
+  }
+
+  .issue-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background-color: var(--card);
+    color: var(--card-foreground);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .issue-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .issue-status-pending {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: rgb(254 249 195);
+    color: rgb(133 77 14);
+  }
+
+  .issue-status-in-progress {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: rgb(219 234 254);
+    color: rgb(30 64 175);
+  }
+
+  .issue-status-resolved {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: rgb(220 252 231);
+    color: rgb(22 101 52);
+  }
+
+  .alert-emergency {
+    background-color: rgb(254 226 226);
+    border-left-width: 4px;
+    border-left-color: rgb(239 68 68);
+    color: rgb(185 28 28);
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .alert-warning {
+    background-color: rgb(254 249 195);
+    border-left-width: 4px;
+    border-left-color: rgb(234 179 8);
+    color: rgb(133 77 14);
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .alert-info {
+    background-color: rgb(219 234 254);
+    border-left-width: 4px;
+    border-left-color: rgb(59 130 246);
+    color: rgb(29 78 216);
+    padding: 1rem;
+  }
+
+  /* BharatSudhar specific styles */
+  .bharatsudhar-gradient {
+    background-image: linear-gradient(
+      to right,
+      var(--primary),
+      color-mix(in srgb, var(--primary) 80%, transparent)
+    );
+  }
+
+  .bharatsudhar-secondary-gradient {
+    background-image: linear-gradient(
+      to right,
+      var(--secondary),
+      color-mix(in srgb, var(--secondary) 80%, transparent)
+    );
+  }
+
+  .bharatsudhar-card {
+    border-left-width: 4px;
+    border-left-color: var(--primary);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-md);
+  }
+
+  .bharatsudhar-btn {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  .bharatsudhar-btn:hover {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+
+@layer utilities {
+  .pulse-animation {
+    display: relative;
+  }
+
+  .pulse-animation::before {
+    content: "";
+    display: absolute;
+    border-radius: 9999px;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: scale(0.8);
+    opacity: 0;
+    animation: pulse-ring 1.25s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  }
+}
