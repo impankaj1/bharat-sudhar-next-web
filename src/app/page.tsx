@@ -182,7 +182,7 @@ export default function Home() {
             <div className="mb-10 text-center">
               <h2 className="text-3xl font-bold mb-2">How It Works</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                JanAwaaz makes it easy to report civic issues and track their
+                Bharat Sudhar makes it easy to report civic issues and track their
                 resolution
               </p>
             </div>
@@ -311,7 +311,7 @@ export default function Home() {
             <div>
               <div className="flex items-center mb-4">
                 <BellRing className="h-6 w-6 text-secondary mr-2" />
-                <span className="text-xl font-bold">JanAwaaz</span>
+                <span className="text-xl font-bold">Bharat Sudhar</span>
               </div>
               <p className="text-muted-foreground">
                 Empowering citizens to improve their communities through
@@ -358,7 +358,7 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-bold mb-4">Contact</h3>
               <p className="text-muted-foreground">
-                support@janawaaz.org
+                support@bharatsudhar.org
                 <br />
                 +91 12345 67890
               </p>
@@ -408,7 +408,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-muted-foreground text-sm">
-            &copy; {new Date().getFullYear()} JanAwaaz. All rights reserved.
+            &copy; {new Date().getFullYear()} BharatSudhar. All rights reserved.
           </div>
         </div>
       </footer>
