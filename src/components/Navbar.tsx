@@ -7,14 +7,20 @@ import { Bell, Flag, Home, MapPin, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
+import { useUserStore } from "@/lib/store";
+import { Dialog, DialogTrigger } from "./ui/dialog";
+import { LoginDialog } from "./LoginDialog";
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const isActive = (path: string) => {
     return pathname === path;
   };
+
+  const user = useUserStore((state) => state.user);
 
   const navItems = [
     { path: "/", icon: <Home size={20} />, label: "Home" },
@@ -38,20 +44,37 @@ const Navbar = () => {
 
           {/* Desktop navigation */}
           <div className="hidden sm:ml-6 sm:flex">
-            {navItems.map((item) => (
-              <Link key={item.path} href={item.path}>
-                <Button
-                  variant={isActive(item.path) ? "default" : "secondary"}
-                  className={cn(
-                    "flex items-center mx-1",
-                    "text-primary-foreground"
-                  )}
-                >
-                  {item.icon}
-                  <span className="ml-2">{item.label}</span>
-                </Button>
-              </Link>
-            ))}
+            {user ? (
+              navItems.map((item) => (
+                <Link key={item.path} href={item.path}>
+                  <Button
+                    variant={isActive(item.path) ? "default" : "secondary"}
+                    className={cn(
+                      "flex items-center mx-1",
+                      "text-primary-foreground"
+                    )}
+                  >
+                    {item.icon}
+                    <span className="ml-2">{item.label}</span>
+                  </Button>
+                </Link>
+              ))
+            ) : (
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant={"secondary"}
+                    className={cn(
+                      "flex items-center mx-1",
+                      "text-primary-foreground"
+                    )}
+                  >
+                    Login
+                  </Button>
+                </DialogTrigger>
+                <LoginDialog open={open} onOpenChange={setOpen} />
+              </Dialog>
+            )}
           </div>
 
           {/* Mobile menu button */}

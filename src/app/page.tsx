@@ -27,6 +27,7 @@ interface Issues {
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [issues, setIssues] = useState<Issues[]>([]);
+  
   const fetchIssues = async () => {
     const featureIssue: Issues[] = await axios.get(
       `${process.env.NEXT_PUBLIC_BASE_URL}/location`
