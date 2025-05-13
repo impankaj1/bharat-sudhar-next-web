@@ -1,3 +1,7 @@
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { CreateProfileDialog } from "@/components/CreateProfileDialog";
+
 // Update the Create Profile button in the Call to Action section
 // Replace the existing Link component with:
 
