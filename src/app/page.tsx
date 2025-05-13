@@ -1,10 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CreateProfileDialog } from "@/components/CreateProfileDialog";
 
 export default function Home() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           size="lg"
@@ -14,7 +19,7 @@ export default function Home() {
           Create Profile
         </Button>
       </DialogTrigger>
-      <CreateProfileDialog />
+      <CreateProfileDialog open={open} onOpenChange={setOpen} />
     </Dialog>
   );
 }
