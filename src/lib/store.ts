@@ -1,27 +1,11 @@
+import { User } from "@/types/user";
 import { create } from "zustand";
-
-interface User {
-  id?: string;
-  name?: string;
-  email?: string;
-  phoneNumber?: string;
-  state?: string;
-  district?: string;
-}
-
-interface Report {
-  title?: string;
-  description?: string;
-  category?: string;
-  subcategory?: string;
-  state?: string;
-  district?: string;
-  location?: string;
-}
+import Cookies from "js-cookie";
 
 interface UserState {
   user: User | null;
-  setUser: (user: User) => void;
+  token: string | null;
+  setUser: (user: User, token: string) => void;
   clearUser: () => void;
 }
 
@@ -33,8 +17,21 @@ interface ReportIssuesState {
 
 export const useUserStore = create<UserState>((set) => ({
   user: null,
-  setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
+  token: null,
+  setUser: (user, token) => {
+    // Store token in cookie with 7 days expiry
+    Cookies.set("auth_token", token, {
+      expires: 7,
+      secure: true,
+      sameSite: "strict",
+    });
+    set({ user, token });
+  },
+  clearUser: () => {
+    // Remove token from cookie
+    Cookies.remove("auth_token");
+    set({ user: null, token: null });
+  },
 }));
 
 export const useReportStore = create<ReportIssuesState>((set) => ({

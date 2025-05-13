@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { useUserStore } from "@/lib/store";
 import axios from "axios";
 import { Award, BellRing, Flag, MapPin, Shield } from "lucide-react";
 import Link from "next/link";
@@ -27,10 +28,10 @@ interface Issues {
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [issues, setIssues] = useState<Issues[]>([]);
-  
+
   const fetchIssues = async () => {
     const featureIssue: Issues[] = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/location`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/reports/location`
     );
     return featureIssue;
   };
@@ -65,6 +66,8 @@ export default function Home() {
     },
   ];
 
+  const user = useUserStore((state) => state.user);
+  console.log("user", !!user);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -314,27 +317,30 @@ export default function Home() {
               issues today.
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
-              <Link href="/report">
-                <Button
-                  size="lg"
-                  variant="default"
-                  className="bg-white border-white  text-secondary  hover:text-white hover:bg-secondary-foreground/10"
-                >
-                  Get Started Now
-                </Button>
-              </Link>
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
+              {!!user ? (
+                <Link href="/report">
                   <Button
                     size="lg"
-                    variant="outline"
-                    className="border-white text-secondary hover:text-white hover:bg-secondary-foreground/10 w-fit self-center "
+                    variant="default"
+                    className="bg-white border-white  text-secondary  hover:text-white hover:bg-secondary-foreground/10"
                   >
-                    Create Profile
+                    Get Started Now
                   </Button>
-                </DialogTrigger>
-                <CreateProfileDialog open={open} onOpenChange={setOpen} />
-              </Dialog>
+                </Link>
+              ) : (
+                <Dialog open={open} onOpenChange={setOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-white text-secondary hover:text-white hover:bg-secondary-foreground/10 w-fit self-center "
+                    >
+                      Create Profile
+                    </Button>
+                  </DialogTrigger>
+                  <CreateProfileDialog open={open} onOpenChange={setOpen} />
+                </Dialog>
+              )}
             </div>
           </div>
         </section>

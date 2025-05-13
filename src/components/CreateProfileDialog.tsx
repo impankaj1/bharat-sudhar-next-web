@@ -119,7 +119,7 @@ export function CreateProfileDialog({
       if (response.data.success) {
         toast("Profile created successfully!");
         onOpenChange(false);
-        setUser(formData);
+        setUser(response.data.user, response.data.jwtToken);
       }
     } catch (error) {
       toast("Failed to create profile. Please try again.");

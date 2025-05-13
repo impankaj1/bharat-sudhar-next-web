@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Camera, MapPin, Flag, AlertTriangle, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +24,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useReportStore } from "@/lib/store";
+import { useReportStore, useUserStore } from "@/lib/store";
+import Cookies from "js-cookie";
 
 export const ISSUE_CATEGORIES = [
   {
@@ -136,6 +137,7 @@ const MOCK_AUTHORITIES = [
 ];
 
 const IssueReport = () => {
+  const user = useUserStore((state) => state.user);
   const [issueData, setIssueData] = useState({
     title: "",
     description: "",
@@ -143,9 +145,21 @@ const IssueReport = () => {
     subcategory: "",
     state: "",
     district: "",
-    location: "",
+    location: {
+      type: "Point",
+      coordinates: [0, 0], // [longitude, latitude]
+      address: "",
+    },
     isUrgent: false,
+    userId: user?._id,
   });
+
+  useEffect(() => {
+    setIssueData((prev) => ({
+      ...prev,
+      userId: user?._id,
+    }));
+  }, [user]);
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [media, setMedia] = useState<{ preview: string; type: string } | null>(
@@ -161,7 +175,7 @@ const IssueReport = () => {
     // Suggest relevant authorities based on category
     suggestAuthoritiesForCategory(value);
   };
-
+  console.log("user", user);
   const suggestAuthoritiesForCategory = (category: string) => {
     // This would ideally come from an API based on the category and location
     // For now, we'll just suggest some relevant authorities based on the category
@@ -192,6 +206,10 @@ const IssueReport = () => {
     setIssueData((prev) => ({ ...prev, subcategory: value }));
   };
 
+  useEffect(() => {
+    setIssueData((prev) => ({ ...prev, userId: user?._id }));
+  }, [user]);
+
   const handleStateChange = (value: string) => {
     setIssueData((prev) => ({ ...prev, state: value, district: "" }));
   };
@@ -200,7 +218,17 @@ const IssueReport = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setIssueData((prev) => ({ ...prev, [name]: value }));
+    if (name === "location") {
+      setIssueData((prev) => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          address: value,
+        },
+      }));
+    } else {
+      setIssueData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -237,26 +265,33 @@ const IssueReport = () => {
     setSubmitting(true);
 
     try {
+      const token = Cookies.get("auth_token");
+      if (!token) {
+        toast("Please login to report an issue");
+        return;
+      }
+
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/create`,
-        issueData
+        `${process.env.NEXT_PUBLIC_BASE_URL}/reports/create`,
+        {
+          ...issueData,
+          userId: user?._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       if (response.data.success) {
         toast("Issue Reported Successfully");
-        setReport(issueData);
+        setReport(response.data.report);
       }
     } catch (error) {
       toast("Failed to create report. Please try again.");
     } finally {
       setSubmitting(false);
-    }
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/create`,
-      issueData
-    );
-    if (response.data.success) {
-      toast("Issue Reported Successfully");
-      setReport(issueData);
     }
   };
 
@@ -278,7 +313,7 @@ const IssueReport = () => {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Issue Title</Label>
+            <Label htmlFor="title">Issue Title *</Label>
             <Input
               id="title"
               name="title"
@@ -291,8 +326,12 @@ const IssueReport = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Category</Label>
-              <Select onValueChange={handleCategoryChange}>
+              <Label>Category *</Label>
+              <Select
+                value={issueData.category}
+                onValueChange={handleCategoryChange}
+                required
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -308,34 +347,16 @@ const IssueReport = () => {
                 </SelectContent>
               </Select>
             </div>
-
-            {/* <div className="space-y-2">
-              <Label>Subcategory</Label>
-              <Select
-                disabled={!selectedCategory}
-                onValueChange={handleSubcategoryChange}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select subcategory" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Subcategories</SelectLabel>
-                    {subcategories.map((sub) => (
-                      <SelectItem key={sub} value={sub}>
-                        {sub}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>State</Label>
-              <Select onValueChange={handleStateChange}>
+              <Label>State *</Label>
+              <Select
+                value={issueData.state}
+                onValueChange={handleStateChange}
+                required
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select state" />
                 </SelectTrigger>
@@ -353,7 +374,7 @@ const IssueReport = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="district">District</Label>
+              <Label htmlFor="district">District *</Label>
               <Input
                 id="district"
                 name="district"
@@ -367,33 +388,22 @@ const IssueReport = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="location">Specific Location</Label>
+            <Label htmlFor="location">Specific Location *</Label>
             <div className="flex">
               <Input
                 id="location"
                 name="location"
                 placeholder="Enter specific address/location"
-                value={issueData.location}
+                value={issueData.location.address}
                 onChange={handleChange}
                 className="flex-1"
                 required
               />
-              {/* <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="ml-2"
-                onClick={() => {
-                  toast("Getting your current location...");
-                }}
-              >
-                <MapPin className="h-4 w-4" />
-              </Button> */}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Description *</Label>
             <Textarea
               id="description"
               name="description"
@@ -530,18 +540,18 @@ const IssueReport = () => {
             </button>
             <span>Mark as urgent issue</span>
           </div> */}
+
+          <CardFooter className="flex justify-end">
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="w-full sm:w-auto"
+            >
+              {submitting ? "Submitting..." : "Submit Report"}
+            </Button>
+          </CardFooter>
         </form>
       </CardContent>
-      <CardFooter className="flex justify-end">
-        <Button
-          type="submit"
-          disabled={submitting}
-          onClick={handleSubmit}
-          className="w-full sm:w-auto"
-        >
-          {submitting ? "Submitting..." : "Submit Report"}
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

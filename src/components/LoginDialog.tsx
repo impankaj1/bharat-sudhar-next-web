@@ -46,12 +46,12 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         formData
       );
       if (response.data.success) {
-        toast("Profile created successfully!");
+        toast("Login successfully!");
         onOpenChange(false);
-        setUser(formData);
+        setUser(response.data.user, response.data.jwtToken);
       }
     } catch (error) {
-      toast("Failed to create profile. Please try again.");
+      toast("Failed to login. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -97,7 +97,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? <Loader2 className="animate-spin" /> : "Login  "}
+              {loading ? <Loader2 className="animate-spin" /> : "Login"}
             </Button>
           </div>
         </form>
