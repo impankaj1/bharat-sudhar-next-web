@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { Toaster } from "@/components/ui/sonner";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Bharat Sudhar",
@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={` min-h-screen bg-background font-sans antialiased`}>
         <TooltipProvider>
-          <Toaster />
+          <ToastContainer position="top-center" />
           {children}
         </TooltipProvider>
       </body>

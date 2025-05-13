@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import axios from "axios";
-import { useToast } from "@/hooks/use-toast";
-import { useUserStore } from "@/lib/store";
 import {
   Dialog,
   DialogContent,
@@ -21,20 +19,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUserStore } from "@/lib/store";
+import { INDIAN_STATES } from "./IssueReport";
+import { toast } from "react-toastify";
 
-interface EmergencyContact {
-  name: string;
-  phoneNumber: string;
-  relationship: string;
-}
+// interface EmergencyContact {
+//   name: string;
+//   phoneNumber: string;
+//   relationship: string;
+// }
 
 interface CreateProfileDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function CreateProfileDialog({ open, onOpenChange }: CreateProfileDialogProps) {
-  const { toast } = useToast();
+export function CreateProfileDialog({
+  open,
+  onOpenChange,
+}: CreateProfileDialogProps) {
   const setUser = useUserStore((state) => state.setUser);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -48,14 +51,14 @@ export function CreateProfileDialog({ open, onOpenChange }: CreateProfileDialogP
       coordinates: [0, 0],
       address: "",
     },
-    emergencyContacts: [] as EmergencyContact[],
+    // emergencyContacts: [] as EmergencyContact[],
   });
 
-  const [emergencyContact, setEmergencyContact] = useState<EmergencyContact>({
-    name: "",
-    phoneNumber: "",
-    relationship: "",
-  });
+  // const [emergencyContact, setEmergencyContact] = useState<EmergencyContact>({
+  //   name: "",
+  //   phoneNumber: "",
+  //   relationship: "",
+  // });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -76,46 +79,50 @@ export function CreateProfileDialog({ open, onOpenChange }: CreateProfileDialogP
     }));
   };
 
-  const handleEmergencyContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setEmergencyContact((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const handleEmergencyContactChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   setEmergencyContact((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
-  const addEmergencyContact = () => {
-    if (emergencyContact.name && emergencyContact.phoneNumber && emergencyContact.relationship) {
-      setFormData((prev) => ({
-        ...prev,
-        emergencyContacts: [...prev.emergencyContacts, emergencyContact],
-      }));
-      setEmergencyContact({
-        name: "",
-        phoneNumber: "",
-        relationship: "",
-      });
-    }
-  };
+  // const addEmergencyContact = () => {
+  //   if (
+  //     emergencyContact.name &&
+  //     emergencyContact.phoneNumber &&
+  //     emergencyContact.relationship
+  //   ) {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       emergencyContacts: [...prev.emergencyContacts, emergencyContact],
+  //     }));
+  //     setEmergencyContact({
+  //       name: "",
+  //       phoneNumber: "",
+  //       relationship: "",
+  //     });
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:27017/auth/user/create", formData);
-      setUser(response.data);
-      toast({
-        title: "Success",
-        description: "Profile created successfully!",
-      });
-      onOpenChange(false);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signup`,
+        formData
+      );
+      if (response.data.success) {
+        toast("Profile created successfully!");
+        onOpenChange(false);
+        setUser(formData);
+      }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create profile. Please try again.",
-        variant: "destructive",
-      });
+      toast("Failed to create profile. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -191,8 +198,11 @@ export function CreateProfileDialog({ open, onOpenChange }: CreateProfileDialogP
                 </SelectTrigger>
                 <SelectContent>
                   {/* Add Indian states here */}
-                  <SelectItem value="karnataka">Karnataka</SelectItem>
-                  <SelectItem value="maharashtra">Maharashtra</SelectItem>
+                  {INDIAN_STATES.map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
                   {/* Add more states */}
                 </SelectContent>
               </Select>
@@ -221,7 +231,7 @@ export function CreateProfileDialog({ open, onOpenChange }: CreateProfileDialogP
             />
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label>Emergency Contact</Label>
             <div className="space-y-2">
               <Input
@@ -262,7 +272,7 @@ export function CreateProfileDialog({ open, onOpenChange }: CreateProfileDialogP
                 </ul>
               </div>
             )}
-          </div>
+          </div> */}
 
           <div className="flex justify-end space-x-2">
             <Button

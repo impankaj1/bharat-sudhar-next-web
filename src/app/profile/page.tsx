@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUserStore } from "@/lib/store";
 
 type Achievement = {
   id: string;
@@ -85,6 +86,9 @@ const USER_ACTIVITIES: IssueActivity[] = [
 ];
 
 export default function UserProfile() {
+  const user = useUserStore((state) => state.user);
+  console.log("user", user);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":

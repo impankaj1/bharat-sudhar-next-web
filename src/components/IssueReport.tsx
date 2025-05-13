@@ -22,9 +22,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useReportStore } from "@/lib/store";
 
-const ISSUE_CATEGORIES = [
+export const ISSUE_CATEGORIES = [
   {
     value: "infrastructure",
     label: "Infrastructure",
@@ -67,7 +69,7 @@ const ISSUE_CATEGORIES = [
   },
 ];
 
-const INDIAN_STATES = [
+export const INDIAN_STATES = [
   "Andhra Pradesh",
   "Arunachal Pradesh",
   "Assam",
@@ -134,7 +136,6 @@ const MOCK_AUTHORITIES = [
 ];
 
 const IssueReport = () => {
-  const { toast } = useToast();
   const [issueData, setIssueData] = useState({
     title: "",
     description: "",
@@ -152,7 +153,7 @@ const IssueReport = () => {
   );
   const [submitting, setSubmitting] = useState(false);
   const [taggedAuthorities, setTaggedAuthorities] = useState<string[]>([]);
-
+  const setReport = useReportStore((state) => state.setReport);
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
     setIssueData((prev) => ({ ...prev, category: value, subcategory: "" }));
@@ -214,9 +215,9 @@ const IssueReport = () => {
     }
   };
 
-  const handleUrgentToggle = () => {
-    setIssueData((prev) => ({ ...prev, isUrgent: !prev.isUrgent }));
-  };
+  // const handleUrgentToggle = () => {
+  //   setIssueData((prev) => ({ ...prev, isUrgent: !prev.isUrgent }));
+  // };
 
   const handleAuthoritySelection = (authorityId: string) => {
     setTaggedAuthorities((prev) => {
@@ -235,17 +236,28 @@ const IssueReport = () => {
     e.preventDefault();
     setSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "Issue Reported",
-        description:
-          "Your issue has been successfully reported to local authorities.",
-      });
-
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/create`,
+        issueData
+      );
+      if (response.data.success) {
+        toast("Issue Reported Successfully");
+        setReport(issueData);
+      }
+    } catch (error) {
+      toast("Failed to create report. Please try again.");
+    } finally {
       setSubmitting(false);
-      // Reset form or redirect
-    }, 2000);
+    }
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/create`,
+      issueData
+    );
+    if (response.data.success) {
+      toast("Issue Reported Successfully");
+      setReport(issueData);
+    }
   };
 
   const subcategories =
@@ -297,7 +309,7 @@ const IssueReport = () => {
               </Select>
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label>Subcategory</Label>
               <Select
                 disabled={!selectedCategory}
@@ -317,7 +329,7 @@ const IssueReport = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -366,20 +378,17 @@ const IssueReport = () => {
                 className="flex-1"
                 required
               />
-              <Button
+              {/* <Button
                 type="button"
                 variant="outline"
                 size="icon"
                 className="ml-2"
                 onClick={() => {
-                  toast({
-                    title: "Location Access",
-                    description: "Getting your current location...",
-                  });
+                  toast("Getting your current location...");
                 }}
               >
                 <MapPin className="h-4 w-4" />
-              </Button>
+              </Button> */}
             </div>
           </div>
 
@@ -507,7 +516,7 @@ const IssueReport = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <button
               type="button"
               className={`p-2 rounded-md ${
@@ -520,7 +529,7 @@ const IssueReport = () => {
               <AlertTriangle className="h-5 w-5" />
             </button>
             <span>Mark as urgent issue</span>
-          </div>
+          </div> */}
         </form>
       </CardContent>
       <CardFooter className="flex justify-end">

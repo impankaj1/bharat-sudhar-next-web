@@ -1,5 +1,4 @@
-
-export type IssueStatus = 'pending' | 'in-progress' | 'resolved';
+export type IssueStatus = "pending" | "in-progress" | "resolved";
 
 export type Authority = {
   id: string;
